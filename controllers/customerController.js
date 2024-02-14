@@ -1,95 +1,113 @@
+const express = require('express');
 const Customer = require('../models/Customer')
-const User = require('../models/User')
-const asyncHandler = require('express-async-handler')
-
-// @desc Get all notes 
-// @route GET /notes
-// @access Private
-const getAllNotes = asyncHandler(async (req, res) => {
-    // Get all notes from MongoDB
-    const notes = await Note.find().lean()
+const mongoose = require('mongoose');
+const { body, validationResult } = require('express-validator');
 
 
-// If no notes 
-if (!notes?.length) {
-  return res.status(400).json({ message: 'No notes found' })
-}
 
-// Add username to each note before sending the response 
-// See Promise.all with map() here: https://youtu.be/4lqJBBEpjRE 
-// You could also do this with a for...of loop
-const notesWithUser = await Promise.all(notes.map(async (note) => {
-  const user = await User.findById(note.user).lean().exec()
-  return { ...note, username: user.username }
-}))
+const Customer = mongoose.model('Customer', CustomerSchema);
 
-res.json(notesWithUser)
+const router = express.Router();
+
+// Middleware for validation and error handling
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 
-// Confirm data
-if (!user || !title || !text) {
-  return res.status(400).json({ message: 'All fields are required' })
-}
+// Create a new customer (POST)
+router.post('/',
+  body('name').isString().notEmpty(),
+  body('email').isEmail().custom(async (email, { req }) => {
+    const existingCustomer = await Customer.findOne({ email });
+    if (existingCustomer) {
+      throw new Error('Email already exists');
+    }
+    return true;
+  }),
+  body('address').isString().optional(),
+  body('phone_number').isString().optional(),
+  body('device_details').isObject().optional(),
+  validate,
+  async (req, res) => {
+    const newCustomer = new Customer(req.body);
+    try {
+      const savedCustomer = await newCustomer.save();
+      res.status(201).json(savedCustomer);
+    } catch (err) {
+      console.error('Error creating customer:', err);
+      res.status(500).json({ message: 'Error creating customer' });
+    }
+  }
+);
 
-// Check for duplicate title
-const duplicate = await Note.findOne({ title }).lean().exec()
+// Get all customers (GET)
+router.get('/', async (req, res) => {
+  try {
+    const customers = await Customer.find();
+    res.json(customers);
+  } catch (err) {
+    console.error('Error getting customers:', err);
+    res.status(500).json({ message: 'Error getting customers' });
+  }
+});
 
-if (duplicate) {
-  return res.status(409).json({ message: 'Duplicate note title' })
-}
+// Get a specific customer by ID (GET)
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const customer = await Customer.findById(id);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    res.json(customer);
+  } catch (err) {
+    console.error('Error getting customer:', err);
+    res.status(500).json({ message: 'Error getting customer' });
+  }
+});
 
-// Create and store the new user 
-const note = await Note.create({ user, title, text })
+// Update a customer's details (PUT)
+router.put('/:id',
+  body('name').isString().optional(),
+  body('email').isEmail().optional(),
+  body('address').isString().optional(),
+  body('phone_number').isString().optional(),
+  body('device_details').isObject().optional(),
+  validate,
+  async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+    try {
+      const updatedCustomer = await Customer.findByIdAndUpdate(id, updates, { new: true });
+      if (!updatedCustomer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json(updatedCustomer);
+    } catch (err) {
+      console.error('Error updating customer:', err);
+      res.status(500).json({ message: 'Error updating customer' });
+    }
+  }
+)
 
-if (note) { // Created 
-  return res.status(201).json({ message: 'New note created' })
-} else {
-  return res.status(400).json({ message: 'Invalid note data received' })
-}
+// Delete a customer (DELETE)
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedCustomer = await Customer.findByIdAndDelete(id);
+    if (!deletedCustomer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    res.json({ message: 'Customer deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting customer:', err);
+    res.status(500).json({ message: 'Error deleting customer' });
+  }
+});
 
-// Confirm data
-if (!id || !user || !title || !text || typeof completed !== 'boolean') {
-  return res.status(400).json({ message: 'All fields are required' })
-}
-
-// Confirm note exists to update
-const note = await Note.findById(id).exec()
-
-if (!note) {
-  return res.status(400).json({ message: 'Note not found' })
-}
-
-// Check for duplicate title
-const duplicate = await Note.findOne({ title }).lean().exec()
-
-// Allow renaming of the original note 
-if (duplicate && duplicate?._id.toString() !== id) {
-  return res.status(409).json({ message: 'Duplicate note title' })
-}
-
-note.user = user
-note.title = title
-note.text = text
-note.completed = completed
-
-const updatedNote = await note.save()
-
-res.json(`'${updatedNote.title}' updated`)
-
-// Confirm data
-if (!id) {
-  return res.status(400).json({ message: 'Note ID required' })
-}
-
-// Confirm note exists to delete 
-const note = await Note.findById(id).exec()
-
-if (!note) {
-  return res.status(400).json({ message: 'Note not found' })
-}
-
-const result = await note.deleteOne()
-
-const reply = `Note '${result.title}' with ID ${result._id} deleted`
-
-res.json(reply)
+module.exports = router; // Export the router for use in your main app
