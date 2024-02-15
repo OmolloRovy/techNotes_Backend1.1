@@ -1,5 +1,6 @@
 const express = require('express');
 const Customer = require('../models/Customer')
+const Note = require('../models/Note')
 const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 
@@ -20,33 +21,35 @@ const validate = (req, res, next) => {
 
 
 // Create a new customer (POST)
-router.post('/',
-  body('name').isString().notEmpty(),
-  body('email').isEmail().custom(async (email, { req }) => {
-    const existingCustomer = await Customer.findOne({ email });
-    if (existingCustomer) {
-      throw new Error('Email already exists');
-    }
-    return true;
-  }),
-  body('address').isString().optional(),
-  body('phone_number').isString().optional(),
-  body('device_details').isObject().optional(),
-  validate,
-  async (req, res) => {
-    const newCustomer = new Customer(req.body);
-    try {
-      const savedCustomer = await newCustomer.save();
-      res.status(201).json(savedCustomer);
-    } catch (err) {
-      console.error('Error creating customer:', err);
-      res.status(500).json({ message: 'Error creating customer' });
-    }
-  }
-);
+const createCustomer= asyncHandler(async (req, res)=>{const {name, email, address, phone_number, device_details} = req.body
+
+//confirm data
+if(!name || !email ||!address ||!phone_number || !device_details){
+  return res.status(400).json({message:'All fields are required'})
+}
+//check for Duplicate
+const duplicate = await  Customer.findOne({email}).lean().exec()
+
+if (duplicate ){
+  return res.status(409).json({message: 'Duplicate email'})
+}
+ 
+const customerObject = {name, email, address, phone_number, device_details}
+
+//create and store a new customer
+
+const customer = await Customer.create(customerObject)
+
+if (customer){//created
+  res.status(201).json({message: 'New customer created'})
+}else{
+  res.status(400).json
+({message:'invalid customer data recieved'})
+}
+})
 
 // Get all customers (GET)
-router.get('/', async (req, res) => {
+const getAllCustomers = asyncHandler(async(req,res) => {
   try {
     const customers = await Customer.find();
     res.json(customers);
@@ -56,58 +59,62 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a specific customer by ID (GET)
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const customer = await Customer.findById(id);
-    if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
-    }
-    res.json(customer);
-  } catch (err) {
-    console.error('Error getting customer:', err);
-    res.status(500).json({ message: 'Error getting customer' });
-  }
-});
-
 // Update a customer's details (PUT)
-router.put('/:id',
-  body('name').isString().optional(),
-  body('email').isEmail().optional(),
-  body('address').isString().optional(),
-  body('phone_number').isString().optional(),
-  body('device_details').isObject().optional(),
-  validate,
-  async (req, res) => {
-    const { id } = req.params;
-    const updates = req.body;
-    try {
-      const updatedCustomer = await Customer.findByIdAndUpdate(id, updates, { new: true });
-      if (!updatedCustomer) {
-        return res.status(404).json({ message: 'Customer not found' });
-      }
-      res.json(updatedCustomer);
-    } catch (err) {
-      console.error('Error updating customer:', err);
-      res.status(500).json({ message: 'Error updating customer' });
-    }
-  }
-)
+const updateCustomer = asysncHandler(async (req,res)=>{
+ const {id,name,email,address,phone_number,device_details} = req.body
+
+ //confirm data 
+ if (!id || !name ||!email ||!address ||!phone_number ||!device_details){
+  return res.status(400).json({message:'All fields are required'})
+ }
+ const customer = await Customer.findById(id).exec()
+
+ if (!customer){
+  return res.status(400).json
+  ({message:'Customers not found'})
+ }
+ const duplicate = await Customer.findOne({email}).lean().exec
+()
+// allow updates to the original customer
+if (duplicate && duplicate?._id.toString() !==id){
+  return res.status(409).json
+  ({message:'Duplicate Email'})
+}
+customer.name = name
+customer.email= email
+customer.address= address
+customer.phone_number= phone_number
+customer.device_details= device_details
+
+const updatedCustomer = await customer.save()
+
+res.json({message: `${updatedCustomer.email} updated`})
+})
 
 // Delete a customer (DELETE)
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const deletedCustomer = await Customer.findByIdAndDelete(id);
-    if (!deletedCustomer) {
-      return res.status(404).json({ message: 'Customer not found' });
-    }
-    res.json({ message: 'Customer deleted successfully' });
-  } catch (err) {
-    console.error('Error deleting customer:', err);
-    res.status(500).json({ message: 'Error deleting customer' });
+const deleteCustomer = asyncHandler(async (req,res)=>{
+  const {id} = req.body
+  if(!id){
+    return res.status(400).json
+    ({message:'Customer Id required'})
   }
-});
+  const customer = await Customer.findById(id).exec()
 
-module.exports = router; // Export the router for use in your main app
+  if (!customer) {
+           return res.status(404).json({ message: 'Customer not found' });
+  }
+  const result = await customer.deleteOne()
+
+  const reply = `email ${result.email} with Id ${result._id} deleted`
+
+  res.json(reply)
+})
+
+
+
+module.exports = {
+  getAllCustomers,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+}

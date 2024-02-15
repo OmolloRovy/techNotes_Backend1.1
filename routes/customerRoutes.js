@@ -9,11 +9,8 @@ const customerController = require('../controllers/customerController'); // Adju
 // Customer routes
 router.route('/')
   .get(customerController.getAllCustomers) // Get all customers
-  .post(customerController.createCustomer); // Create a new customer
-
-router.route('/:id')
-  .get(customerController.getCustomerById) // Get a specific customer by ID
+  .post(customerController.createCustomer) // Create a new customer
   .put(customerController.updateCustomer) // Update a customer's details
-  .delete(customerController.deleteCustomer); // Delete a customer
+  .delete(customerController.deleteCustomer) // Delete a customer
 
 module.exports = router;
