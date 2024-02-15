@@ -3,10 +3,7 @@ const Customer = require('../models/Customer')
 const Note = require('../models/Note')
 const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
-
-
-
-const Customer = mongoose.model('Customer', CustomerSchema);
+const asyncHandler = require('../middleware/asyncHandler')
 
 const router = express.Router();
 
@@ -21,7 +18,7 @@ const validate = (req, res, next) => {
 
 
 // Create a new customer (POST)
-const createCustomer= asyncHandler(async (req, res)=>{const {name, email, address, phone_number, device_details} = req.body
+const createCustomer = asyncHandler(async (req, res)=>{const {name, email, address, phone_number, device_details} = req.body
 
 //confirm data
 if(!name || !email ||!address ||!phone_number || !device_details){
@@ -60,7 +57,7 @@ const getAllCustomers = asyncHandler(async(req,res) => {
 });
 
 // Update a customer's details (PUT)
-const updateCustomer = asysncHandler(async (req,res)=>{
+const updateCustomer = asyncHandler(async (req,res)=>{
  const {id,name,email,address,phone_number,device_details} = req.body
 
  //confirm data 
