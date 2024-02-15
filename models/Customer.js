@@ -5,7 +5,7 @@ const customerSchema = new mongoose.Schema(
   {
     note: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: "Note",
     },
     name: {
