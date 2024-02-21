@@ -10,7 +10,7 @@
 
 :root {
   /* COLORS */
-  --BGCOLOR: #0F172A;
+  --BGCOLOR: #242122;
   --BORDER-COLOR: #FFF;
   --COLOR: #FFF;
   --ERROR: firebrick;
@@ -69,7 +69,7 @@ body {
   min-height: 100vh;
   background-color: var(--BGCOLOR);
   color: var(--COLOR);
-  background-image: url('./img/background.jpg');
+  /* background-image: url('./img/background.jpg'); */
   background-size: cover;
   background-position: top right;
   background-blend-mode: multiply;
@@ -124,6 +124,7 @@ a:focus-visible {
 
 .public__header{
   text-align:center;
+  background-color: rgb(182, 12, 69);
 }
 .public__main,
 .login {
@@ -154,7 +155,7 @@ a:focus-visible {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--BGCOLOR);
+  background-color: rgb(182, 12, 69);
   padding: 0 0.5em;
   border-bottom: 1px solid var(--BORDER-COLOR);
 }
@@ -188,7 +189,7 @@ a:focus-visible {
   position: sticky;
   bottom: 0;
   z-index: 1;
-  background-color: var(--BGCOLOR);
+  background-color:  rgb(182, 12, 69);;
   padding: 0.5em;
   border-top: 1px solid var(--BORDER-COLOR);
   display: flex;

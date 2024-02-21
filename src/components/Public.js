@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import FAQ from './FAQ';
 
 const Public = () => {
     return (
@@ -11,6 +12,7 @@ const Public = () => {
                 <h3>Welcome to <span className="nowrap1">IntoTech Repairs!</span></h3>
                 <br />
                 <p className='public__p1'>We are located in Beautiful Downtown City. We provide a trained staff ready to meet your tech repair needs. Let's bring your machine back to life again.</p>
+                <FAQ />
             </main>
             <footer>
                 <ul>

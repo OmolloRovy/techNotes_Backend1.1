@@ -19,7 +19,7 @@ const Welcome = () => {
             <Link to="/dash/users"><button>Employees</button></Link>
 
             <Link to="/dash/users/new"><button>Add New User</button></Link>
-            <Link to="/dash/customer"><button>Customer details</button></Link>
+            <Link to="/dash/customers"><button>Customer details</button></Link>
             </p>
         </section>
     )

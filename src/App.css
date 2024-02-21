@@ -1,3 +1,6 @@
+
+@import "./node_modules/react-collapse/css/collapse.css";
+
 .App {
   text-align: center;
 }
