@@ -74,17 +74,7 @@ const selectCustomersData = createSelector(
   customerResult => customerResult.data
 
 
-  // ... transform response using normalize function if needed
 );
-
-// // Selectors for accessing customer data:
-// const selectCustomerById = createSelector(
-//   // ... state and ID selectors based on your data structure
-// );
-
-// const selectAllCustomers = createSelector(
-//   // ... state selector to access all customers
-// );
 
 export const {
   selectById: selectCustomerById,
