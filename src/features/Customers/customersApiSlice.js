@@ -1,5 +1,6 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 import { apiSlice } from "../../app/api/apiSlice";
+import { createSelector } from '@reduxjs/toolkit';
 
 const customersAdapter = createEntityAdapter({
   sortComparer: (a, b) => (a.name.toLowerCase() < b.name.toLowerCase()) ? -1 : 1,
