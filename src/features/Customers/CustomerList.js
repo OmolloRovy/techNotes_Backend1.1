@@ -28,7 +28,7 @@ const CustomerList = () => {
       const { ids } = customers;
   
       const tableContent = ids?.length
-      ? ids.map(userId => <Customer key={userId} userId={userId} />)
+      ? ids.map(customerId => <Customer key={customerId} userId={customerId} />)
       : null
 
   content = (
