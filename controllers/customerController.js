@@ -47,13 +47,12 @@ if (customer){//created
 
 // Get all customers (GET)
 const getAllCustomers = asyncHandler(async(req,res) => {
-  try {
-    const customers = await Customer.find();
-    res.json(customers);
-  } catch (err) {
-    console.error('Error getting customers:', err);
-    res.status(500).json({ message: 'Error getting customers' });
-  }
+ 
+    const customers = await Customer.find().lean();
+    if (!customers){
+      return res.status(400).json({message:'No customers found'})
+    }
+    res.json(customers)
 });
 
 // Update a customer's details (PUT)
@@ -95,6 +94,11 @@ const deleteCustomer = asyncHandler(async (req,res)=>{
     return res.status(400).json
     ({message:'Customer Id required'})
   }
+  //add payement connection to customer here
+  // const payments = await Payment.findOne({customer: id}).lean().exec()
+  // if(customers?.length){
+  //   return res.status(400).json({message:Customer machine is in repair})
+  // }
   const customer = await Customer.findById(id).exec()
 
   if (!customer) {
