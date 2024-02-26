@@ -18,7 +18,7 @@ const validate = (req, res, next) => {
 
 
 // Create a new customer (POST)
-const createPayment = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods} = req.body
+const createPayments = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods} = req.body
 
 //confirm data
 if(!name || !amountPaid ||!change ||!otherMethods ){
