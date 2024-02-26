@@ -94,11 +94,11 @@ const deleteCustomer = asyncHandler(async (req,res)=>{
     return res.status(400).json
     ({message:'Customer Id required'})
   }
-  //add payement connection to customer here
-  // const payments = await Payment.findOne({customer: id}).lean().exec()
-  // if(customers?.length){
-  //   return res.status(400).json({message:Customer machine is in repair})
-  // }
+
+  const payments = await Payment.findOne({customer: id}).lean().exec()
+  if(customers?.length){
+    return res.status(400).json({message:'Customer machine is in repair'})
+  }
   const customer = await Customer.findById(id).exec()
 
   if (!customer) {

@@ -57,10 +57,10 @@ const getAllPayments = asyncHandler(async(req,res) => {
 
 // Update a customer's details (PUT)
 const updatePayments = asyncHandler(async (req,res)=>{
- const { name,amountPaid,change,otherMethods} = req.body
+ const { id,name,amountPaid,change,otherMethods} = req.body
 
  //confirm data 
- if (!name || !amountPaid ||!change ||!otherMethods ){
+ if (!id ||!name || !amountPaid ||!change ||!otherMethods ){
   return res.status(400).json({message:'All fields are required'})
  }
  const payment = await Payment.findById(id).exec()
@@ -78,14 +78,14 @@ if (duplicate && duplicate?._id.toString() !==id){
 }
 !name || !amountPaid ||!change ||!otherMethods 
 payment.name = name
-payment.amountPaid= email
-payment.change = address
-payment.otherMethods = phone_number
+payment.amountPaid= amountPaid
+payment.change = change
+payment.otherMethods = otherMethods
 
 
-const updatedCustomer = await customer.save()
+const updatedPayment = await payment.save()
 
-res.json({message: `${updatedCustomer.email} updated`})
+res.json({message: `${updatedPayment.name} updated`})
 })
 
 // Delete a Payments (DELETE)
@@ -93,13 +93,12 @@ const deletePayments = asyncHandler(async (req,res)=>{
   const {id} = req.body
   if(!id){
     return res.status(400).json
-    ({message:'Customer Id required'})
+    ({message:'Payment Id required'})
   }
-  //add payement connection to customer here
-  // const payments = await Payment.findOne({customer: id}).lean().exec()
-  // if(customers?.length){
-  //   return res.status(400).json({message:Customer machine is in repair})
-  // }
+  const payments = await Payment.findOne({customer: id}).lean().exec()
+  if(customers?.length){
+    return res.status(400).json({message:Customer machine is in repair})
+  }
   const customer = await Customer.findById(id).exec()
 
   if (!customer) {
