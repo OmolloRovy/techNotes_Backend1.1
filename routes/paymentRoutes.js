@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const customerController = require('../controllers/customerController'); // Adjust path based on your controller location
+const paymentController = require('../controllers/paymentController'); // Adjust path based on your controller location
 
 // Middleware (implement any authentication or authorization here if needed)
 // const verifyJWT = require('../middleware/verifyJWT');
@@ -8,9 +8,9 @@ const customerController = require('../controllers/customerController'); // Adju
 
 // Customer routes
 router.route('/')
-  .get(customerController.getAllCustomers) // Get all customers
-  .post(customerController.createCustomer) // Create a new customer
-  .put(customerController.updateCustomer) // Update a customer's details
-  .delete(customerController.deleteCustomer) // Delete a customer
+  .get(paymentController.getAllPayments) // Get all customers
+  .post(paymentController.createPayments) // Create a new customer
+  .put(paymentController.updatePayments) // Update a customer's details
+  .delete(paymentController.deletePayments) // Delete a customer
 
 module.exports = router;
