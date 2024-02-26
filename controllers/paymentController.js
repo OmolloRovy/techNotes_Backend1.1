@@ -57,7 +57,7 @@ const getAllPayments = asyncHandler(async(req,res) => {
 
 // Update a customer's details (PUT)
 const updatePayments = asyncHandler(async (req,res)=>{
- const {name,email,address,phone_number,device_details} = req.body
+ const { name,amountPaid,change,otherMethods} = req.body
 
  //confirm data 
  if (!id || !name ||!email ||!address ||!phone_number ||!device_details){

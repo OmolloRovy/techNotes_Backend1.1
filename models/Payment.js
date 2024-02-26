@@ -11,15 +11,18 @@ const paymentSchema = new mongoose.Schema(
 name: {
       type: String,
       required: true,
-      ref: 'User'
     },
-    Amountpaid: {
+    amountPaid: {
       type:  Integer,
       required: true,
      
     },
     change: {
       type: Integer,
+      required: true,
+    },
+    otherMethods: {
+      type: String,
       required: true,
     },
   
