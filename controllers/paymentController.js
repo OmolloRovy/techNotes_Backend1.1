@@ -18,30 +18,30 @@ const validate = (req, res, next) => {
 
 
 // Create a new customer (POST)
-const createCustomer = asyncHandler(async (req, res)=>{const {name, email, address, phone_number, device_details} = req.body
+const createPayment = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods} = req.body
 
 //confirm data
-if(!name || !email ||!address ||!phone_number || !device_details){
+if(!name || !amountPaid ||!change ||!otherMethods ){
   return res.status(400).json({message:'All fields are required'})
 }
 //check for Duplicate
-const duplicate = await  Customer.findOne({email}).lean().exec()
+const duplicate = await  Payment.findOne({name}).lean().exec()
 
 if (duplicate ){
-  return res.status(409).json({message: 'Duplicate email'})
+  return res.status(409).json({message: 'Duplicate name'})
 }
  
-const customerObject = {name, email, address, phone_number, device_details}
+const paymentObject = {name,amountPaid,change,otherMethods}
 
-//create and store a new customer
+//create and store a new payment
 
-const customer = await Customer.create(customerObject)
+const payment = await Payment.create(paymentObject)
 
-if (customer){//created
-  res.status(201).json({message: 'New customer created'})
+if (payment){//created
+  res.status(201).json({message: 'New Payment created'})
 }else{
   res.status(400).json
-({message:'invalid customer data recieved'})
+({message:'invalid payment data recieved'})
 }
 })
 
