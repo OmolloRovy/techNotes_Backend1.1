@@ -60,27 +60,28 @@ const updatePayments = asyncHandler(async (req,res)=>{
  const { name,amountPaid,change,otherMethods} = req.body
 
  //confirm data 
- if (!id || !name ||!email ||!address ||!phone_number ||!device_details){
+ if (!name || !amountPaid ||!change ||!otherMethods ){
   return res.status(400).json({message:'All fields are required'})
  }
- const customer = await Customer.findById(id).exec()
+ const payment = await Payment.findById(id).exec()
 
- if (!customer){
+ if (!payment){
   return res.status(400).json
-  ({message:'Customers not found'})
+  ({message:'Payment not found'})
  }
- const duplicate = await Customer.findOne({email}).lean().exec
+ const duplicate = await Payment.findOne({name}).lean().exec
 ()
 // allow updates to the original customer
 if (duplicate && duplicate?._id.toString() !==id){
   return res.status(409).json
-  ({message:'Duplicate Email'})
+  ({message:'Duplicate Name'})
 }
-customer.name = name
-customer.email= email
-customer.address= address
-customer.phone_number= phone_number
-customer.device_details= device_details
+!name || !amountPaid ||!change ||!otherMethods 
+payment.name = name
+payment.amountPaid= email
+payment.change = address
+payment.otherMethods = phone_number
+
 
 const updatedCustomer = await customer.save()
 
