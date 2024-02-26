@@ -95,18 +95,15 @@ const deletePayments = asyncHandler(async (req,res)=>{
     return res.status(400).json
     ({message:'Payment Id required'})
   }
-  const payments = await Payment.findOne({customer: id}).lean().exec()
-  if(customers?.length){
-    return res.status(400).json({message:Customer machine is in repair})
-  }
-  const customer = await Customer.findById(id).exec()
 
-  if (!customer) {
-           return res.status(404).json({ message: 'Customer not found' });
-  }
-  const result = await customer.deleteOne()
+  const payment = await Payment.findById(id).exec()
 
-  const reply = `email ${result.email} with Id ${result._id} deleted`
+  if (!payment) {
+           return res.status(404).json({ message: 'payment not found' });
+  }
+  const result = await payment.deleteOne()
+
+  const reply = `name ${result.name} with Id ${result._id} deleted`
 
   res.json(reply)
 })
