@@ -45,19 +45,19 @@ if (customer){//created
 }
 })
 
-// Get all customers (GET)
-const getAllCustomers = asyncHandler(async(req,res) => {
+// Get all payments (GET)
+const getAllPayments = asyncHandler(async(req,res) => {
  
-    const customers = await Customer.find().lean();
-    if (!customers){
-      return res.status(400).json({message:'No customers found'})
+    const payments = await Payment.find().lean();
+    if (!payments){
+      return res.status(400).json({message:'No Payments found'})
     }
-    res.json(customers)
+    res.json(payments)
 });
 
 // Update a customer's details (PUT)
-const updateCustomer = asyncHandler(async (req,res)=>{
- const {id,name,email,address,phone_number,device_details} = req.body
+const updatePayments = asyncHandler(async (req,res)=>{
+ const {name,email,address,phone_number,device_details} = req.body
 
  //confirm data 
  if (!id || !name ||!email ||!address ||!phone_number ||!device_details){
@@ -87,8 +87,8 @@ const updatedCustomer = await customer.save()
 res.json({message: `${updatedCustomer.email} updated`})
 })
 
-// Delete a customer (DELETE)
-const deleteCustomer = asyncHandler(async (req,res)=>{
+// Delete a Payments (DELETE)
+const deletePayments = asyncHandler(async (req,res)=>{
   const {id} = req.body
   if(!id){
     return res.status(400).json
@@ -114,8 +114,8 @@ const deleteCustomer = asyncHandler(async (req,res)=>{
 
 
 module.exports = {
-  getAllCustomers,
-  createCustomer,
-  updateCustomer,
-  deleteCustomer,
+  getAllPayments,
+  createPayments,
+  updatePayments,
+  deletePayments,
 }
