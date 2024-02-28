@@ -1,6 +1,6 @@
 const express = require('express');
 const Customer = require('../models/Customer')
-const Payment = require('../models/Customer')
+const Payment = require('../models/Payment')
 const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const asyncHandler = require('../middleware/asyncHandler')
@@ -17,7 +17,7 @@ const validate = (req, res, next) => {
 };
 
 
-// Create a new customer (POST)
+// Create a new payment (POST)
 const createPayments = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods} = req.body
 
 //confirm data
@@ -55,7 +55,7 @@ const getAllPayments = asyncHandler(async(req,res) => {
     res.json(payments)
 });
 
-// Update a customer's details (PUT)
+// Update a payments details (PUT)
 const updatePayments = asyncHandler(async (req,res)=>{
  const { id,name,amountPaid,change,otherMethods} = req.body
 
@@ -71,7 +71,7 @@ const updatePayments = asyncHandler(async (req,res)=>{
  }
  const duplicate = await Payment.findOne({name}).lean().exec
 ()
-// allow updates to the original customer
+// allow updates to the original payment
 if (duplicate && duplicate?._id.toString() !==id){
   return res.status(409).json
   ({message:'Duplicate Name'})

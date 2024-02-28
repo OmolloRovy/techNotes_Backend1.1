@@ -3,22 +3,22 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const paymentSchema = new mongoose.Schema(
   {
-    customer:{
-      type:mongoose.Schema.Types.ObjectId,
-      required:true,
-      ref: 'Customer'
-    },
+    // customer:{
+    //   type:mongoose.Schema.Types.ObjectId,
+    //   required:true,
+    //   ref: 'Customer'
+    // },
 name: {
       type: String,
       required: true,
     },
     amountPaid: {
-      type:  Integer,
+      type:  String,
       required: true,
      
     },
     change: {
-      type: Integer,
+      type: String,
       required: true,
     },
     otherMethods: {
