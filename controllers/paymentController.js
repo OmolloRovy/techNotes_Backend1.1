@@ -1,5 +1,5 @@
 const express = require('express');
-const Customer = require('../models/Customer')
+// const Customer = require('../models/Customer')
 const Payment = require('../models/Payment')
 const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
@@ -18,10 +18,10 @@ const validate = (req, res, next) => {
 
 
 // Create a new payment (POST)
-const createPayments = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods} = req.body
+const createPayments = asyncHandler(async (req, res)=>{const {name,amountPaid,change,otherMethods,remarks} = req.body
 
 //confirm data
-if(!name || !amountPaid ||!change ||!otherMethods ){
+if(!name || !amountPaid ||!change ||!otherMethods||!remarks ){
   return res.status(400).json({message:'All fields are required'})
 }
 //check for Duplicate
@@ -31,7 +31,7 @@ if (duplicate ){
   return res.status(409).json({message: 'Duplicate name'})
 }
  
-const paymentObject = {name,amountPaid,change,otherMethods}
+const paymentObject = {name,amountPaid,change,otherMethods,remarks}
 
 //create and store a new payment
 
@@ -57,10 +57,10 @@ const getAllPayments = asyncHandler(async(req,res) => {
 
 // Update a payments details (PUT)
 const updatePayments = asyncHandler(async (req,res)=>{
- const { id,name,amountPaid,change,otherMethods} = req.body
+ const { id,name,amountPaid,change,otherMethods,remarks} = req.body
 
  //confirm data 
- if (!id ||!name || !amountPaid ||!change ||!otherMethods ){
+ if (!id ||!name || !amountPaid ||!change ||!otherMethods||!remarks ){
   return res.status(400).json({message:'All fields are required'})
  }
  const payment = await Payment.findById(id).exec()
@@ -76,12 +76,12 @@ if (duplicate && duplicate?._id.toString() !==id){
   return res.status(409).json
   ({message:'Duplicate Name'})
 }
-!name || !amountPaid ||!change ||!otherMethods 
+!name || !amountPaid ||!change ||!otherMethods ||!remarks
 payment.name = name
 payment.amountPaid= amountPaid
 payment.change = change
 payment.otherMethods = otherMethods
-
+payment.remarks=remarks
 
 const updatedPayment = await payment.save()
 
